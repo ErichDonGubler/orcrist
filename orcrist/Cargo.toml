@@ -1,0 +1,20 @@
+[package]
+name = "orcrist"
+version = "0.1.0"
+authors = ["Erich Gubler <erichdongubler@gmail.com>"]
+edition = "2018"
+
+[features]
+default = ["derive"]
+
+# Enables derive macros exposed via `orcrist-derive`
+derive = ["orcrist-derive"]
+
+[dependencies]
+named_type = "0.2.0"
+named_type_derive = "0.2.0"
+orcrist-derive = { path = "../orcrist-derive", optional = true }
+
+[dev-dependencies]
+byteorder = "1.3.1"
+orcrist-derive = { path = "../orcrist-derive" }

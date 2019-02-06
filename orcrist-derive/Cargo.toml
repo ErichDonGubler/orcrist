@@ -1,0 +1,17 @@
+[package]
+name = "orcrist-derive"
+version = "0.1.0"
+authors = ["Erich Gubler <erichdongubler@gmail.com>"]
+edition = "2018"
+
+[lib]
+proc-macro = true
+
+[dependencies]
+synstructure = "0.10.1"
+quote = "0.6.11"
+proc-macro2 = "0.4.27"
+syn = "0.15.26"
+
+[dev-dependencies]
+orcrist = { path = "../orcrist" }
