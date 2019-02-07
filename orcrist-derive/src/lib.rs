@@ -144,11 +144,11 @@ mod test {
                         let mut w = |args| write!(f, "{} field", args);
                         match self {
                             __FIELDS_OF_Asdf::meh(inner) => w(format_args!(
-                                "{} of meh",
+                                "{} of `meh`",
                                 inner
                             )),
                             __FIELDS_OF_Asdf::blarg(inner) => w(format_args!(
-                                "{} of blarg",
+                                "{} of `blarg`",
                                 inner
                             )),
                         }
@@ -190,7 +190,7 @@ mod test {
                     fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
                         let mut w = |args| write!(f, "{} field", args);
                         match self {
-                            __FIELDS_OF_Wat::Inner0(inner) => w(format_args!("{} of Inner0", inner)),
+                            __FIELDS_OF_Wat::Inner0(inner) => w(format_args!("{} of position 0", inner)),
                         }
                     }
                 }
