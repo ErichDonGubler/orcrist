@@ -34,7 +34,7 @@ impl<FieldEnum> ByteReadFailure<FieldEnum> {
     {
         let Self {
             inner,
-            type_name: _,
+            type_name: _type_name,
             field,
         } = self;
 
