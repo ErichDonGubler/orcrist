@@ -30,8 +30,17 @@ fn main() {
         Asdf::from_fixed_bytes(&mut Cursor::new(b"\x05\x1B\x00")).unwrap()
     );
 
-    println!("Derive works! See the source of this example ({}) for more details.", file!());
+    println!(
+        "Derive works! See the source of this example ({}) for more details.",
+        file!()
+    );
     println!("Failures would look something like this:");
-    println!("{}", Wat::from_fixed_bytes(&mut Cursor::new(b"")).unwrap_err());
-    println!("{}", Asdf::from_fixed_bytes(&mut Cursor::new(b"")).unwrap_err());
+    println!(
+        "{}",
+        Wat::from_fixed_bytes(&mut Cursor::new(b"")).unwrap_err()
+    );
+    println!(
+        "{}",
+        Asdf::from_fixed_bytes(&mut Cursor::new(b"")).unwrap_err()
+    );
 }

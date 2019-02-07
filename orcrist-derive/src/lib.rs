@@ -50,11 +50,14 @@ fn from_fixed_bytes_derive(s: Structure) -> TokenStream {
             v.bindings().iter().enumerate().map(|(idx, b)| {
                 let ident_maybe = b.ast().ident.as_ref();
                 let ident = resolve_ident(ident_maybe, idx);
-                let msg = format!("{{}} of {}", if let Some(ident) = b.ast().ident.as_ref() {
-                    format!("`{}`", ident.to_string())
-                } else {
-                    format!("position {}", idx)
-                });
+                let msg = format!(
+                    "{{}} of {}",
+                    if let Some(ident) = b.ast().ident.as_ref() {
+                        format!("`{}`", ident.to_string())
+                    } else {
+                        format!("position {}", idx)
+                    }
+                );
                 quote! {
                     #fields_enum_name::#ident(inner) => w(format_args!(#msg, inner)),
                 }

@@ -24,7 +24,11 @@ pub struct ByteReadFailure<FieldEnum> {
 }
 
 impl<FieldEnum> ByteReadFailure<FieldEnum> {
-    pub fn map_field<OtherFieldEnum, F>(self, other_type_name: &'static str, f: F) -> ByteReadFailure<OtherFieldEnum>
+    pub fn map_field<OtherFieldEnum, F>(
+        self,
+        other_type_name: &'static str,
+        f: F,
+    ) -> ByteReadFailure<OtherFieldEnum>
     where
         F: FnOnce(FieldEnum) -> OtherFieldEnum,
     {
@@ -64,11 +68,7 @@ impl<FieldEnum: Display> Display for ByteReadFailure<FieldEnum> {
             type_name,
             field,
         } = self;
-        write!(
-            f,
-            "unable to read {} of {}: {}",
-            field, type_name, inner
-        )
+        write!(f, "unable to read {} of {}: {}", field, type_name, inner)
     }
 }
 
@@ -162,9 +162,7 @@ impl_primitive_conversions!(Ne, from_ne_bytes);
 impl FromFixedBytes for u8 {
     type FieldEnum = PrimitiveField;
 
-    fn from_fixed_bytes<R: Read>(
-        stream: &mut R,
-    ) -> Result<Self, ByteReadFailure<Self::FieldEnum>> {
+    fn from_fixed_bytes<R: Read>(stream: &mut R) -> Result<Self, ByteReadFailure<Self::FieldEnum>> {
         let mut buf = [0u8];
         stream.read_exact(&mut buf).map_err(|e| ByteReadFailure {
             field: PrimitiveField,
