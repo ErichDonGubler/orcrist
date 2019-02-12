@@ -147,6 +147,11 @@ macro_rules! impl_primitive_conversion {
 
 macro_rules! impl_primitive_conversions {
     ($newtype_name: ident, $array_conv_fn: ident) => {
+        impl_primitive_conversion!($newtype_name, i8, $array_conv_fn);
+        impl_primitive_conversion!($newtype_name, i16, $array_conv_fn);
+        impl_primitive_conversion!($newtype_name, i32, $array_conv_fn);
+        impl_primitive_conversion!($newtype_name, i64, $array_conv_fn);
+        impl_primitive_conversion!($newtype_name, i128, $array_conv_fn);
         impl_primitive_conversion!($newtype_name, u8, $array_conv_fn);
         impl_primitive_conversion!($newtype_name, u16, $array_conv_fn);
         impl_primitive_conversion!($newtype_name, u32, $array_conv_fn);
