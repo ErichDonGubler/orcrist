@@ -5,7 +5,7 @@ use {
         error::Error as ErrorTrait,
         fmt::{Debug, Display, Formatter, Result as FmtResult},
         io::{Error as IoError, Read},
-        mem::{size_of, uninitialized},
+        mem::{size_of, transmute, uninitialized},
     },
 };
 
@@ -122,6 +122,59 @@ impl Display for PrimitiveField {
     }
 }
 
+pub struct ArrayElement<T> {
+    index: usize,
+    field: T,
+}
+
+impl<T: Debug> Debug for ArrayElement<T> {
+    fn fmt(&self, f: &mut Formatter<'_>) -> FmtResult {
+        let Self {
+            index,
+            field,
+        } = self;
+
+        f.debug_struct("ArrayElement")
+            .field("index", index)
+            .field("field", field)
+            .finish()
+    }
+}
+
+impl<T> Display for ArrayElement<T> {
+    fn fmt(&self, f: &mut Formatter<'_>) -> FmtResult {
+        let Self {
+            index,
+            field: _field,
+        } = self;
+
+        write!(f, "element at index {}", index)
+    }
+}
+
+// impl<A: Array<Item=$primitive_name>> FromFixedBytes for $newtype_name<A> {
+//     type FieldEnum = ArrayElement;
+
+//     fn from_fixed_bytes<R: Read>(stream: &mut R) -> Result<Self, ByteReadFailure<Self::FieldEnum>> {
+//         let raw = unsafe {
+//             uninitialized::<[u8; size_of::<Array>()]>()
+//         };
+//         for (index, raw_element) in raw.iter_mut().enumerate() {
+//             *raw_element = <$primitive_name as FromFixedBytes>::from_fixed_bytes(stream).map_err(|e| e.map_field(
+//                 stringify!(array of $primitive_name),
+//                 |field| ArrayElement {
+//                     index,
+//                     field,
+//                 },
+//             ))?
+//         }
+//         let initialized = unsafe {
+//             transmute(raw)
+//         };
+//         Ok($newtype_name(initialized))
+//     }
+// }
+
 macro_rules! impl_primitive_conversion {
     ($newtype_name: ident, $primitive_name: ident, $array_conv_fn: ident) => {
         impl FromFixedBytes for $newtype_name<$primitive_name> {
@@ -164,16 +217,31 @@ impl_primitive_conversions!(Le, from_le_bytes);
 impl_primitive_conversions!(Be, from_be_bytes);
 impl_primitive_conversions!(Ne, from_ne_bytes);
 
-impl FromFixedBytes for u8 {
-    type FieldEnum = PrimitiveField;
+macro_rules! impl_array_conversion {
+    ($size: expr) => {
+        impl<InnerFieldEnum: Debug + Display, T: Debug + FromFixedBytes<FieldEnum=InnerFieldEnum> + Sized> FromFixedBytes for [T; $size] {
+            type FieldEnum = ArrayElement<InnerFieldEnum>;
 
-    fn from_fixed_bytes<R: Read>(stream: &mut R) -> Result<Self, ByteReadFailure<Self::FieldEnum>> {
-        let mut buf = [0u8];
-        stream.read_exact(&mut buf).map_err(|e| ByteReadFailure {
-            field: PrimitiveField,
-            type_name: "u8",
-            inner: e,
-        })?;
-        Ok(buf[0])
-    }
+            fn from_fixed_bytes<R: Read>(stream: &mut R) -> Result<Self, ByteReadFailure<Self::FieldEnum>> {
+                let raw = unsafe {
+                    uninitialized::<[u8; $size * size_of::<T>()]>()
+                };
+                for (index, raw_element) in raw.iter_mut().enumerate() {
+                    *raw_element = <T as FromFixedBytes>::from_fixed_bytes(stream).map_err(|e| e.map_field(
+                        "array",
+                        |field| ArrayElement {
+                            index,
+                            field,
+                        },
+                    ))?
+                }
+                Ok(unsafe {
+                    transmute(raw)
+                })
+            }
+        }
+    };
 }
+
+impl_array_conversion!(0);
+impl_array_conversion!(1);
