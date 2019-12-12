@@ -11,7 +11,7 @@ proc-macro = true
 synstructure = "0.10.1"
 quote = "0.6.11"
 proc-macro2 = "0.4.27"
-syn = "0.15.26"
+syn = "1.0.11"
 
 [dev-dependencies]
 orcrist = { path = "../orcrist" }
