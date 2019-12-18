@@ -11,10 +11,9 @@ default = ["derive"]
 derive = ["orcrist-derive"]
 
 [dependencies]
-named_type = "0.2.0"
-named_type_derive = "0.2.0"
+named_type_derive = { git = "https://github.com/erichdongubler/named_type", branch = "update-deps" }
 orcrist-derive = { path = "../orcrist-derive", optional = true }
 
 [dev-dependencies]
-byteorder = "1.3.1"
+byteorder = "1.3.2"
 orcrist-derive = { path = "../orcrist-derive" }
